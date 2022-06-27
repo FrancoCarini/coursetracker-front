@@ -1,7 +1,11 @@
+import Landing from './pages/Landing'
+
 function App() {
   return (
-    <h1>Course Tracker</h1>
-  );
+    <div>
+      <Landing />
+    </div>
+  )
 }
 
-export default App;
+export default App
