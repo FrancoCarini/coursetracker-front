@@ -1,17 +1,17 @@
-import logo from '../assets/images/logo.svg'
 import main from '../assets/images/main.svg'
 import Wrapper from '../assets/wrappers/LandingPage'
+import Logo from '../components/Logo'
 
 const Landing = () => {
   return (
     <Wrapper>
       <nav>
-        <img src={logo} alt="corse tracker" className="logo" />
+        <Logo />
       </nav>
       <div className="container page">
         <div className="info">
           <h1>
-            Course <span>Trackig</span> App
+            Course <span>Tracking</span> App
           </h1>
           <p>
             Track and register all of your courses that you're taking and check
