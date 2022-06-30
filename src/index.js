@@ -1,12 +1,16 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import 'normalize.css'
-import './index.css';
-import App from './App';
+import './index.css'
+import App from './App'
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+import CourseProvider from './context/CourseProvider'
+
+const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   <React.StrictMode>
-    <App />
+    <CourseProvider>
+      <App />
+    </CourseProvider>
   </React.StrictMode>
-);
+)
