@@ -1,4 +1,10 @@
+import { useContext } from 'react'
+
+import CourseContext from '../context/CourseContext'
+
 const Alert = () => {
-  return <div className="alert alert-danger">Alert</div>
+  const { alertType, alertText } = useContext(CourseContext)
+
+  return <div className={`alert alert-${alertType}`}>{alertText}</div>
 }
 export default Alert

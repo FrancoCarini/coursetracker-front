@@ -12,10 +12,23 @@ const CourseProvider = ({ children }) => {
   }
   const [state, dispatch] = useReducer(CourseReducer, initialState)
 
-  // Methods
+  const displayAlert = () => {
+    dispatch({
+      type: 'SHOW_ALERT',
+    })
+    clearAlert()
+  }
+
+  const clearAlert = () => {
+    setTimeout(() => {
+      dispatch({
+        type: 'CLEAR_ALERT',
+      })
+    }, 3000)
+  }
 
   return (
-    <CourseContext.Provider value={{ ...state }}>
+    <CourseContext.Provider value={{ ...state, displayAlert }}>
       {children}
     </CourseContext.Provider>
   )

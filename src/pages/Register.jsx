@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useContext } from 'react'
 
 import Logo from '../components/Logo'
 import Wrapper from '../assets/wrappers/RegisterPage'
 import FormRow from '../components/FormRow'
 import Alert from '../components/Alert'
+import CourseContext from '../context/CourseContext'
 
 const Register = () => {
   const [values, setValues] = useState({
@@ -11,16 +12,28 @@ const Register = () => {
     email: '',
     password: '',
     isMember: true,
-    showAlert: false,
   })
 
+  const { isLoading, showAlert, displayAlert } = useContext(CourseContext)
+
   const handleChange = (e) => {
-    console.log(e.target)
+    setValues({
+      ...values,
+      [e.target.name]: e.target.value,
+    })
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log(e.target)
+
+    const { name, email, password, isMember } = values
+
+    if (!email || !password || (!isMember && !name)) {
+      displayAlert()
+      return
+    }
+
+    console.log(values)
   }
 
   const toggleMember = () => {
@@ -35,7 +48,7 @@ const Register = () => {
       <form className="form" onSubmit={handleSubmit}>
         <Logo />
         <h3>{values.isMember ? 'Login' : 'Register'}</h3>
-        {values.showAlert && <Alert />}
+        {showAlert && <Alert />}
         {!values.isMember && (
           <FormRow
             type="text"
