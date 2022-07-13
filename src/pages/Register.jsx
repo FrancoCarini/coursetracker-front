@@ -1,4 +1,5 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import Logo from '../components/Logo'
 import Wrapper from '../assets/wrappers/RegisterPage'
@@ -14,7 +15,18 @@ const Register = () => {
     isMember: true,
   })
 
-  const { isLoading, showAlert, displayAlert } = useContext(CourseContext)
+  const navigate = useNavigate()
+
+  const { isLoading, showAlert, displayAlert, setup, user } =
+    useContext(CourseContext)
+
+  useEffect(() => {
+    if (user) {
+      setTimeout(() => {
+        navigate('/')
+      }, 3000)
+    }
+  }, [user, navigate])
 
   const handleChange = (e) => {
     setValues({
@@ -33,7 +45,11 @@ const Register = () => {
       return
     }
 
-    console.log(values)
+    if (isMember) {
+      setup({ email, password }, 'login', 'Logged In! Redirecting')
+    } else {
+      setup({ name, email, password }, 'register', 'User Created! Redirecting')
+    }
   }
 
   const toggleMember = () => {
@@ -73,7 +89,7 @@ const Register = () => {
           handleChange={handleChange}
           labelText="Password"
         />
-        <button type="submit" className="btn btn-block">
+        <button type="submit" className="btn btn-block" disabled={isLoading}>
           Submit
         </button>
         <p>

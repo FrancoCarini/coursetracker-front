@@ -14,6 +14,29 @@ const CourseReducer = (state, action) => {
         alertType: '',
         alertText: '',
       }
+    case 'SETUP_USER_BEGIN':
+      return {
+        ...state,
+        isLoading: true,
+      }
+    case 'SETUP_USER_SUCCESS':
+      return {
+        ...state,
+        user: action.payload.user,
+        token: action.payload.token,
+        isLoading: false,
+        showAlert: true,
+        alertType: 'success',
+        alertText: action.payload.alertText,
+      }
+    case 'SETUP_USER_ERROR':
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: 'danger',
+        alertText: action.payload.msg,
+      }
     default:
       return state
   }
