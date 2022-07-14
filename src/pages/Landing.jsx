@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import main from '../assets/images/main.svg'
 import Wrapper from '../assets/wrappers/LandingPage'
 import Logo from '../components/Logo'
@@ -17,7 +19,9 @@ const Landing = () => {
             Track and register all of your courses that you're taking and check
             what you're learning.
           </p>
-          <button className="btn btn-hero">Login/Register</button>
+          <Link to="/register" className="btn btn-hero">
+            Login/Register
+          </Link>
         </div>
         <img src={main} alt="course hunt" className="img main-img" />
       </div>

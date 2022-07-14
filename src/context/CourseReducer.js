@@ -37,6 +37,21 @@ const CourseReducer = (state, action) => {
         alertType: 'danger',
         alertText: action.payload.msg,
       }
+    case 'TOGGLE_SIDEBAR':
+      return {
+        ...state,
+        showSidebar: !state.showSidebar,
+      }
+    case 'LOGOUT_USER':
+      return {
+        isLoading: '',
+        showAlert: false,
+        alertText: '',
+        alertType: '',
+        user: null,
+        token: null,
+        showSidebar: false,
+      }
     default:
       return state
   }

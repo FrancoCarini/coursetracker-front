@@ -15,6 +15,7 @@ const CourseProvider = ({ children }) => {
     alertType: '',
     user: user ? JSON.parse(user) : null,
     token: token ? token : null,
+    showSidebar: false,
   }
   const [state, dispatch] = useReducer(CourseReducer, initialState)
 
@@ -108,8 +109,23 @@ const CourseProvider = ({ children }) => {
     clearAlert()
   }
 
+  const toggleSidebar = () => {
+    dispatch({
+      type: 'TOGGLE_SIDEBAR',
+    })
+  }
+
+  const logout = () => {
+    dispatch({
+      type: 'LOGOUT_USER',
+    })
+    removeUserFromLocalStorage()
+  }
+
   return (
-    <CourseContext.Provider value={{ ...state, displayAlert, setup }}>
+    <CourseContext.Provider
+      value={{ ...state, displayAlert, setup, toggleSidebar, logout }}
+    >
       {children}
     </CourseContext.Provider>
   )
