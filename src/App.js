@@ -9,24 +9,27 @@ import Profile from './pages/dashboard/Profile'
 import Stats from './pages/dashboard/Stats'
 import SharedLayout from './pages/dashboard/SharedLayout'
 import ProtectedRoute from './components/ProtectedRoute'
+import PersistLogin from './components/PersistLogin'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* Protected Routes */}
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <SharedLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<Stats />} />
-          <Route path="all-courses" element={<AllCourses />} />
-          <Route path="add-course" element={<AddCourse />} />
-          <Route path="profile" element={<Profile />} />
+        <Route element={<PersistLogin />}>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <SharedLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Stats />} />
+            <Route path="all-courses" element={<AllCourses />} />
+            <Route path="add-course" element={<AddCourse />} />
+            <Route path="profile" element={<Profile />} />
+          </Route>
         </Route>
 
         {/* Public Routes */}

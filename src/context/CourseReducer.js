@@ -52,6 +52,34 @@ const CourseReducer = (state, action) => {
         token: null,
         showSidebar: false,
       }
+    case 'UPDATE_USER_BEGIN':
+      return {
+        ...state,
+        isLoading: true,
+      }
+    case 'UPDATE_USER_SUCCESS':
+      return {
+        ...state,
+        user: action.payload.user,
+        isLoading: false,
+        showAlert: true,
+        alertType: 'success',
+        alertText: 'User profile updated!',
+      }
+    case 'UPDATE_USER_ERROR':
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: 'danger',
+        alertText: action.payload.msg,
+      }
+    case 'SET_USER_TOKEN':
+      return {
+        ...state,
+        user: action.payload.user,
+        token: action.payload.token,
+      }
     default:
       return state
   }

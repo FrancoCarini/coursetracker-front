@@ -1,23 +1,66 @@
 import { useReducer } from 'react'
-import axios from 'axios'
 
 import CourseContext from './CourseContext'
 import CourseReducer from './CourseReducer'
+import axios, { axiosPrivate } from '../utils/axiosInstance'
 
 const CourseProvider = ({ children }) => {
-  const token = localStorage.getItem('token')
-  const user = localStorage.getItem('user')
-
   const initialState = {
     isLoading: '',
     showAlert: false,
     alertText: '',
     alertType: '',
-    user: user ? JSON.parse(user) : null,
-    token: token ? token : null,
+    user: null,
+    token: null,
     showSidebar: false,
+    persist: JSON.parse(localStorage.getItem('persist')) || false,
   }
   const [state, dispatch] = useReducer(CourseReducer, initialState)
+
+  const setUserToken = (user, token) => {
+    dispatch({
+      type: 'SET_USER_TOKEN',
+      payload: {
+        user,
+        token,
+      },
+    })
+  }
+
+  // Axios request
+  axiosPrivate.interceptors.request.use(
+    (config) => {
+      if (!config.headers['Authorization']) {
+        config.headers['Authorization'] = `Bearer ${state.token}`
+      }
+      return config
+    },
+    (error) => Promise.reject(error)
+  )
+
+  // Axios response
+  axiosPrivate.interceptors.response.use(
+    (response) => {
+      return response
+    },
+    async (error) => {
+      const prevRequest = error?.config
+      if (
+        error.response.status === 401 &&
+        error.response.data.error === 'Expired Token' &&
+        !prevRequest?.sent
+      ) {
+        prevRequest.sent = true
+        const { data } = await axios.get('users/refresh', {
+          withCredentials: true,
+        })
+        const { user, token } = data
+        setUserToken(user, token)
+        return axiosPrivate(prevRequest)
+      }
+      return Promise.reject(error)
+    }
+  )
 
   const displayAlert = () => {
     dispatch({
@@ -34,48 +77,6 @@ const CourseProvider = ({ children }) => {
     }, 3000)
   }
 
-  const addUserToLocalStorage = (user, token) => {
-    localStorage.setItem('user', JSON.stringify(user))
-    localStorage.setItem('token', token)
-  }
-
-  const removeUserFromLocalStorage = () => {
-    localStorage.removeItem('user')
-    localStorage.removeItem('token')
-  }
-
-  const register = async (newUser) => {
-    dispatch({
-      type: 'REGISTER_USER_BEGIN',
-    })
-
-    try {
-      const { data } = await axios.post(
-        `${process.env.REACT_APP_API_URL}api/users/register`,
-        newUser
-      )
-
-      const { user, token } = data
-      dispatch({
-        type: 'REGISTER_USER_SUCCESS',
-        payload: {
-          user,
-          token,
-        },
-      })
-      addUserToLocalStorage(user, token)
-    } catch (error) {
-      dispatch({
-        type: 'REGISTER_USER_ERROR',
-        payload: {
-          msg: error.response.data.error,
-        },
-      })
-    }
-
-    clearAlert()
-  }
-
   const setup = async (currentUser, endpoint, alertText) => {
     dispatch({
       type: 'SETUP_USER_BEGIN',
@@ -83,8 +84,16 @@ const CourseProvider = ({ children }) => {
 
     try {
       const { data } = await axios.post(
-        `${process.env.REACT_APP_API_URL}api/users/${endpoint}`,
-        currentUser
+        `users/${endpoint}`,
+        currentUser,
+        {
+          withCredentials: true,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
       )
 
       const { user, token } = data
@@ -96,7 +105,6 @@ const CourseProvider = ({ children }) => {
           alertText,
         },
       })
-      addUserToLocalStorage(user, token)
     } catch (error) {
       dispatch({
         type: 'SETUP_USER_ERROR',
@@ -119,12 +127,47 @@ const CourseProvider = ({ children }) => {
     dispatch({
       type: 'LOGOUT_USER',
     })
-    removeUserFromLocalStorage()
+  }
+
+  const updateUser = async (name) => {
+    dispatch({
+      type: 'UPDATE_USER_BEGIN',
+    })
+
+    try {
+      const { data } = await axiosPrivate.put('users/update', {
+        name,
+      })
+
+      dispatch({
+        type: 'UPDATE_USER_SUCCESS',
+        payload: { user: data.user },
+      })
+    } catch (error) {
+      if (error.response.data.error !== 401) {
+        dispatch({
+          type: 'UPDATE_USER_ERROR',
+          payload: {
+            msg: error.response.data.error,
+          },
+        })
+      }
+    }
+
+    clearAlert()
   }
 
   return (
     <CourseContext.Provider
-      value={{ ...state, displayAlert, setup, toggleSidebar, logout }}
+      value={{
+        ...state,
+        displayAlert,
+        setup,
+        toggleSidebar,
+        logout,
+        updateUser,
+        setUserToken,
+      }}
     >
       {children}
     </CourseContext.Provider>
