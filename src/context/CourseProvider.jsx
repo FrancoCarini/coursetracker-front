@@ -56,6 +56,7 @@ const CourseProvider = ({ children }) => {
         })
         const { user, token } = data
         setUserToken(user, token)
+        error.config.headers['Authorization'] = `Bearer ${token}`
         return axiosPrivate(prevRequest)
       }
       return Promise.reject(error)

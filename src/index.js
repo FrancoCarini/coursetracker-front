@@ -8,9 +8,7 @@ import CourseProvider from './context/CourseProvider'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-  <React.StrictMode>
-    <CourseProvider>
-      <App />
-    </CourseProvider>
-  </React.StrictMode>
+  <CourseProvider>
+    <App />
+  </CourseProvider>
 )
