@@ -14,6 +14,24 @@ const CourseProvider = ({ children }) => {
     token: null,
     showSidebar: false,
     persist: JSON.parse(localStorage.getItem('persist')) || false,
+    course: {
+      title: '',
+      platform: '',
+      url: '',
+      topic: 'Backend Programming',
+      status: 'Not started',
+    },
+    courses: [],
+    topicOptions: [
+      'Backend Programming',
+      'FullStack Programming',
+      'Frontend Programming',
+      'Databases',
+      'HTML',
+      'CSS',
+      'GIT',
+    ],
+    statusOptions: ['Not started', 'on going', 'finished', 'abandoned'],
   }
   const [state, dispatch] = useReducer(CourseReducer, initialState)
 
@@ -158,6 +176,43 @@ const CourseProvider = ({ children }) => {
     clearAlert()
   }
 
+  const clearValues = () => {
+    dispatch({ type: 'CLEAR_VALUES' })
+  }
+
+  const handleChange = (name, value) => {
+    dispatch({ type: 'HANDLE_CHANGE', payload: { name, value } })
+  }
+
+  const createCourse = async () => {
+    dispatch({ type: 'CREATE_COURSE_BEGIN' })
+    try {
+      const { title, url, platform, status, topic } = state.course
+
+      await axiosPrivate.post('courses', {
+        title,
+        url,
+        platform,
+        status,
+        topic,
+      })
+
+      dispatch({ type: 'CREATE_COURSE_SUCCESS' })
+      dispatch({ type: 'CLEAR_VALUES' })
+    } catch (error) {
+      if (error.response.status === 401) return
+      dispatch({
+        type: 'CREATE_COURSE_ERROR',
+        payload: { msg: error.response.data.error },
+      })
+    }
+    clearAlert()
+  }
+
+  const editCourse = () => {
+    console.log('edit')
+  }
+
   return (
     <CourseContext.Provider
       value={{
@@ -168,6 +223,10 @@ const CourseProvider = ({ children }) => {
         logout,
         updateUser,
         setUserToken,
+        clearValues,
+        handleChange,
+        createCourse,
+        editCourse,
       }}
     >
       {children}

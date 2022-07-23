@@ -80,6 +80,46 @@ const CourseReducer = (state, action) => {
         user: action.payload.user,
         token: action.payload.token,
       }
+    case 'HANDLE_CHANGE':
+      return {
+        ...state,
+        course: {
+          ...state.course,
+          [action.payload.name]: action.payload.value,
+        },
+      }
+    case 'CLEAR_VALUES':
+      return {
+        ...state,
+        course: {
+          title: '',
+          platform: '',
+          url: '',
+          topic: 'Backend Programming',
+          status: 'Not started',
+        },
+      }
+    case 'CREATE_COURSE_BEGIN':
+      return {
+        ...state,
+        isLoading: true,
+      }
+    case 'CREATE_COURSE_SUCCESS':
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: 'success',
+        alertText: 'New Course Created!',
+      }
+    case 'CREATE_COURSE_ERROR':
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: 'danger',
+        alertText: action.payload.msg,
+      }
     default:
       return state
   }
