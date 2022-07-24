@@ -18,11 +18,12 @@ const CourseProvider = ({ children }) => {
       title: '',
       platform: '',
       url: '',
-      topic: 'Backend Programming',
-      status: 'Not started',
+      topic: 'all',
+      status: 'all',
     },
     courses: [],
     topicOptions: [
+      'all',
       'Backend Programming',
       'FullStack Programming',
       'Frontend Programming',
@@ -31,7 +32,7 @@ const CourseProvider = ({ children }) => {
       'CSS',
       'GIT',
     ],
-    statusOptions: ['Not started', 'on going', 'finished', 'abandoned'],
+    statusOptions: ['all', 'Not started', 'on going', 'finished', 'abandoned'],
   }
   const [state, dispatch] = useReducer(CourseReducer, initialState)
 
