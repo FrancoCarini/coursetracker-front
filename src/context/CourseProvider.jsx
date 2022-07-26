@@ -15,6 +15,7 @@ const CourseProvider = ({ children }) => {
     showSidebar: false,
     persist: JSON.parse(localStorage.getItem('persist')) || false,
     course: {
+      _id: null,
       title: '',
       platform: '',
       url: '',
@@ -22,6 +23,9 @@ const CourseProvider = ({ children }) => {
       status: 'all',
     },
     courses: [],
+    totalCourses: 0,
+    numOfPages: 1,
+    page: 1,
     topicOptions: [
       'all',
       'Backend Programming',
@@ -33,6 +37,7 @@ const CourseProvider = ({ children }) => {
       'GIT',
     ],
     statusOptions: ['all', 'Not started', 'on going', 'finished', 'abandoned'],
+    stats: {},
   }
   const [state, dispatch] = useReducer(CourseReducer, initialState)
 
@@ -210,8 +215,83 @@ const CourseProvider = ({ children }) => {
     clearAlert()
   }
 
-  const editCourse = () => {
-    console.log('edit')
+  const editCourse = async () => {
+    dispatch({ type: 'UPDATE_COURSE_BEGIN' })
+    try {
+      const { _id, title, url, platform, status, topic } = state.course
+
+      await axiosPrivate.put(`courses/${_id}`, {
+        title,
+        url,
+        platform,
+        status,
+        topic,
+      })
+
+      dispatch({ type: 'UPDATE_COURSE_SUCCESS' })
+    } catch (error) {
+      if (error.response.status === 401) return
+      dispatch({
+        type: 'UPDATE_COURSE_ERROR',
+        payload: { msg: error.response.data.error },
+      })
+    }
+    clearAlert()
+  }
+
+  const deleteCourse = async (id) => {
+    dispatch({ type: 'DELETE_COURSE_BEGIN' })
+    try {
+      await axiosPrivate.delete(`courses/${id}`)
+      getCourses()
+    } catch (error) {
+      logout()
+    }
+  }
+
+  const setEditCourse = (course) => {
+    dispatch({ type: 'SET_EDIT_COURSE', payload: { course } })
+  }
+
+  const getCourses = async () => {
+    dispatch({ type: 'GET_COURSES_BEGIN' })
+
+    try {
+      const { data } = await axiosPrivate.get('courses')
+      const {
+        courses,
+        totalCourses,
+        pagination: { numOfPages },
+      } = data
+      dispatch({
+        type: 'GET_COURSES_SUCCESS',
+        payload: {
+          courses,
+          totalCourses,
+          numOfPages,
+        },
+      })
+    } catch (error) {
+      logout()
+    }
+    clearAlert()
+  }
+
+  const getStats = async () => {
+    dispatch({ type: 'GET_STATS_BEGIN' })
+
+    try {
+      const { data } = await axiosPrivate.get('courses/stats')
+      dispatch({
+        type: 'GET_STATS_SUCCESS',
+        payload: {
+          stats: data.stats,
+        },
+      })
+    } catch (error) {
+      dispatch({ type: 'GET_STATS_ERROR' })
+    }
+    clearAlert()
   }
 
   return (
@@ -228,6 +308,10 @@ const CourseProvider = ({ children }) => {
         handleChange,
         createCourse,
         editCourse,
+        getCourses,
+        setEditCourse,
+        deleteCourse,
+        getStats,
       }}
     >
       {children}

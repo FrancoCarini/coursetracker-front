@@ -18,5 +18,9 @@ const Wrapper = styled.div`
     text-transform: capitalize;
     letter-spacing: var(--letterSpacing);
   }
+  span > a {
+    text-decoration: 'none';
+    color: var(--black);
+  }
 `
 export default Wrapper

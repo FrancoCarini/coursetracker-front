@@ -1,28 +1,28 @@
 import { useEffect, useContext } from 'react'
 import {
   FaSuitcaseRolling,
-  FaWindowClose,
+  FaCalendarCheck,
+  FaBug,
   FaUserGraduate,
-  FaUniversity,
 } from 'react-icons/fa'
-import Wrapper from '../../assets/wrappers/StatsContainer'
+import Wrapper from '../assets/wrappers/StatsContainer'
 
-import CourseContext from '../../context/CourseContext'
-import Loading from '../../components/Loading'
-import StatItem from '../../components/StatItem'
+import CourseContext from '../context/CourseContext'
+import Loading from '../components/Loading'
+import StatItem from './StatItem'
 
 const Stats = () => {
-  const { isLoading, stats, getStats } = useContext(CourseContext)
-
   useEffect(() => {
-    getStats()
+    showStats()
     // eslint-disable-next-line
   }, [])
+
+  const { isLoading, stats } = useContext(CourseContext)
 
   const defaultStats = [
     {
       title: 'Not Started',
-      count: stats['Not started'] || 0,
+      count: stats['not started'] || 0,
       icon: <FaSuitcaseRolling />,
       color: '#e9b949',
       bcg: '#fcefc7',
@@ -36,15 +36,15 @@ const Stats = () => {
     },
     {
       title: 'Finished',
-      count: stats.finished || 0,
+      count: stats.declined || 0,
       icon: <FaUserGraduate />,
-      color: '#28a745',
-      bcg: '#abf7b1',
+      color: '#d66a6a',
+      bcg: '#ffeeee',
     },
     {
       title: 'Abandoned',
-      count: stats.abandoned || 0,
-      icon: <FaWindowClose />,
+      count: stats.declined || 0,
+      icon: <FaBug />,
       color: '#d66a6a',
       bcg: '#ffeeee',
     },

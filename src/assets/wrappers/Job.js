@@ -41,17 +41,21 @@ const Wrapper = styled.article`
       letter-spacing: var(--letterSpacing);
     }
   }
-  .pending {
+  .not-started {
     background: #fcefc7;
     color: #e9b949;
   }
-  .interview {
+  .on-going {
     background: #e0e8f9;
     color: #647acb;
   }
-  .declined {
+  .abandoned {
     color: #d66a6a;
     background: #ffeeee;
+  }
+  .finished {
+    color: #0f5132;
+    background: #d1e7dd;
   }
   .content {
     padding: 1rem 1.5rem;
@@ -89,8 +93,7 @@ const Wrapper = styled.article`
     height: 30px;
   }
   .edit-btn {
-    color: var(--green-dark);
-    background: var(--green-light);
+    background: var(--blue-dark);
     margin-right: 0.5rem;
   }
   .delete-btn {

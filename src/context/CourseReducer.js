@@ -92,6 +92,7 @@ const CourseReducer = (state, action) => {
       return {
         ...state,
         course: {
+          _id: null,
           title: '',
           platform: '',
           url: '',
@@ -113,6 +114,74 @@ const CourseReducer = (state, action) => {
         alertText: 'New Course Created!',
       }
     case 'CREATE_COURSE_ERROR':
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: 'danger',
+        alertText: action.payload.msg,
+      }
+    case 'GET_COURSES_BEGIN':
+      return {
+        ...state,
+        isLoading: true,
+        showAlert: false,
+      }
+    case 'GET_COURSES_SUCCESS':
+      return {
+        ...state,
+        isLoading: false,
+        courses: action.payload.courses,
+        totalCourses: action.payload.totalCourses,
+        numOfPages: action.payload.numOfPages,
+      }
+    case 'SET_EDIT_COURSE':
+      return {
+        ...state,
+        isEditing: true,
+        course: {
+          ...action.payload.course,
+        },
+      }
+    case 'DELETE_COURSE_BEGIN':
+      return {
+        ...state,
+        isLoading: true,
+      }
+    case 'UPDATE_COURSE_BEGIN':
+      return {
+        ...state,
+        isLoading: true,
+      }
+    case 'UPDATE_COURSE_SUCCESS':
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: 'success',
+        alertText: 'Course Updated!',
+      }
+    case 'UPDATE_COURSE_ERROR':
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: 'danger',
+        alertText: action.payload.msg,
+      }
+    case 'GET_STATS_BEGIN':
+      return {
+        ...state,
+        isLoading: true,
+        showAlert: false,
+      }
+    case 'GET_STATS_SUCCESS':
+      return {
+        ...state,
+        isLoading: false,
+        stats: action.payload.stats,
+      }
+    case 'GET_STATS_ERROR':
       return {
         ...state,
         isLoading: false,
