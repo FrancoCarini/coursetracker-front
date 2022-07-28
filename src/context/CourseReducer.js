@@ -189,6 +189,27 @@ const CourseReducer = (state, action) => {
         alertType: 'danger',
         alertText: action.payload.msg,
       }
+    case 'CLEAR_FILTERS':
+      return {
+        ...state,
+        filters: {
+          title: '',
+          platform: '',
+          topic: 'all',
+          status: 'all',
+          sort: 'latest',
+        },
+      }
+    case 'HANDLE_CHANGE_FILTERS':
+      return {
+        ...state,
+        filters: {
+          ...state.filters,
+          [action.payload.name]: action.payload.value,
+        },
+      }
+    case 'CHANGE_PAGE':
+      return { ...state, page: action.payload.page }
     default:
       return state
   }

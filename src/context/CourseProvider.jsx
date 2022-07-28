@@ -37,7 +37,15 @@ const CourseProvider = ({ children }) => {
       'GIT',
     ],
     statusOptions: ['all', 'Not started', 'on going', 'finished', 'abandoned'],
+    sortOptions: ['latest', 'oldest', 'a-z', 'z-a'],
     stats: {},
+    filters: {
+      topic: 'all',
+      status: 'all',
+      sort: 'latest',
+      title: '',
+      platform: '',
+    },
   }
   const [state, dispatch] = useReducer(CourseReducer, initialState)
 
@@ -256,8 +264,17 @@ const CourseProvider = ({ children }) => {
   const getCourses = async () => {
     dispatch({ type: 'GET_COURSES_BEGIN' })
 
+    let filterString = ''
+    Object.entries(state.filters).forEach(([key, value]) => {
+      if (value !== '') {
+        filterString += `&${key}=${value}`
+      }
+    })
+
     try {
-      const { data } = await axiosPrivate.get('courses')
+      const { data } = await axiosPrivate.get(
+        `courses?page=${state.page}${filterString}`
+      )
       const {
         courses,
         totalCourses,
@@ -294,6 +311,20 @@ const CourseProvider = ({ children }) => {
     clearAlert()
   }
 
+  const clearFilters = () => {
+    dispatch({
+      type: 'CLEAR_FILTERS',
+    })
+  }
+
+  const handleChangeFilters = (name, value) => {
+    dispatch({ type: 'HANDLE_CHANGE_FILTERS', payload: { name, value } })
+  }
+
+  const changePage = (page) => {
+    dispatch({ type: 'CHANGE_PAGE', payload: { page } })
+  }
+
   return (
     <CourseContext.Provider
       value={{
@@ -312,6 +343,9 @@ const CourseProvider = ({ children }) => {
         setEditCourse,
         deleteCourse,
         getStats,
+        clearFilters,
+        handleChangeFilters,
+        changePage,
       }}
     >
       {children}
